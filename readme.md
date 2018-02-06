@@ -30,7 +30,7 @@ The parameters are set up as query arguments, once the list of parameters gets l
 
 The code in this repo primarily uses the computers method, though it looks like many of the query parameters work universally.
 
-Something else interesting is that the initial pageload of http(s)://yourbfserver(:52311))/webreports?page=ExploreComputers includes embedded JavaScript with a whole host of useful information which is used to population options, tables, and dropdowns. It isn't exactly straightforward to extract, but that's OK, because I put something together to do it for you. The information it includes in the pageload is contained in JSON objects as follows:
+Something else interesting is that the initial pageload of http(s)://yourbfserver(:52311))/webreports?page=ExploreComputers includes embedded JavaScript with a whole host of useful information which is used to populate options, tables, and dropdowns. It isn't exactly straightforward to extract, but that's OK, because I put something together to do it for you. The information it includes in the pageload is contained in JSON objects as follows:
 
 *   ActionProperties:
     * name  

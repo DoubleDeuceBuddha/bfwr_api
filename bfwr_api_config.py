@@ -24,7 +24,7 @@ sorts = [{"column":"Computer Name","direction":"asc"},
         {"column":"Last Report Time","direction":"desc"},
         {"column":"IP Address","direction":"asc"}]
 
-# Provide an array of columns to expand
+# Provide a list of columns to expand
 # This removes the need to iterate over individual cells as arrays, but will create
 # another row in your results by duplicating the rest of that row.
 expansions = ["IP Address"]

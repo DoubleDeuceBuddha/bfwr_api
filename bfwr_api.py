@@ -8,11 +8,13 @@ import re
 # Config file is bfwr_api_config.py
 import bfwr_api_config as cfg
 
-# This demonstrates some of the new APIs backing the BigFix Web Reports JS frontend
-# First, it pulls some of the predefined filters, properties, groups, etc that are
-# supplied within the initial login and load of the Explore Computers page and prints
-# them. It then does a very basic pull from the /json/computers APImethod, demonstrating column
-# selection, result count, pagination, and column sorting, and prints those results as well.
+# This demonstrates some of the new APIs backing the BigFix Web 
+# Reports JS frontend. First, it pulls the preload filters, properties, 
+# groups, etc that are supplied in the initial login and load of the
+# Explore Computers page. It then does a very basic pull using the 
+# /json/computers APImethod, demonstrating column selection, result 
+# count, pagination, and column sorting, and writes those results as
+# as a csv file. I hope it is straightforward and useful to you.
 #
 # Confirmed works with python 2.7.14
 
@@ -201,7 +203,7 @@ def main():
         ad_path = fetch_results(machine,computer_props["Active Directory Path"],True)
         report_line += ad_path + ","
 
-        # Get parent OU or container for AD abject
+        # Get parent OU or container for AD object
         if "OU=" in ad_path:
             report_line += "OU=" + ad_path.split("OU=",1)[1] + ","
         elif "CN=" in ad_path:
