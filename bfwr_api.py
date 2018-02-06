@@ -5,7 +5,7 @@ import ssl
 import getpass
 import re
 
-# Config file is bfwr_parse_config.py
+# Config file is bfwr_api_config.py
 import bfwr_api_config as cfg
 
 # This demonstrates some of the new APIs backing the BigFix Web Reports JS frontend
@@ -163,48 +163,6 @@ def main():
             computer_props = process_json(line,"ComputerProperties","Computer Properties",".results;","","results")
 
     # Pull down some raw computers data using the API
-    # Quick dissertation on new BF WR API parameters:
-    #
-    # The parameters are set up as query arguments, once the list of parameters
-    # gets long enough, Web Reports has methods in its JavaScript to shorten
-    # them (/post/shortentext where formdata is the query list urlencoded and
-    # ?ShortenedParams= where the parameter is the response string handed you by 
-    # shortentext.)
-    # The results all live in the BESReporting DB, in dbo.SHORTENED_TEXT. The parameters are
-    # stored as the image datatype (hex representation) in the FullText column, and
-    # the ShortText column is a SHA1 hash of the ShortText. These should be unique values
-    # (e.g. no duplicates) but there is no datestamp or tracking to determine whether a
-    # shortened parameter list is still in use, so the table will never be cleaned up
-    # or otherwise managed for size.
-    #
-    # If you note 40 character hexadecimal strings in XHR requests/responses, they
-    # are likely the sha1sum keys stored in this table to reference your shortened text.
-    #
-    # Example parameters that utilize this process are (not necessarily exhaustive):
-    #    filterManager
-    #    reportInfo
-    #    contentTable
-    #    chartSection
-    #    collapseState
-    #
-    # The function build_parameters urlencodes the parameters via urllib.quote(), except 
-    # for '/', '&', and '?' which are "safe" from the Web Reports app server perspective.
-    #
-    # Pagination:
-    # &results=-1&startIndex=0 will give you all results
-    # &results=100&startIndex=300 will give you 100 results starting at the 300th result
-    # This script is hardcoded for all results in the build_parameters function.
-    #
-    # &c= column/property name to include
-    # &sort= column/property name
-    # &dir= direction (asc or desc)
-    #
-    # Example:
-    # &sort=column1&sort=column2&sort=column3&dir=asc&dir=desc&dir=asc&c=column1&c=column3&c=column2&c=column4
-    # Will present 4 columns in this order: column1, column3, column2, column4
-    # Sorted on column1 ascending, column2 descending, column3 ascending, column 4 unsorted
-    #
-    # c=R-Computer Name is required or your query will fail
 
     # Use build_parameters to get your query string
     encoded_parms = build_parameters(columns,sorts,computer_props)
@@ -228,7 +186,7 @@ def main():
     #    else:
     #        outfile.write("\n")
 
-    outfile.write("Computer Name, IP Address, /24 Subnet, AD Path, AD OU or Container, Nessus Recent Login, Last Report Date, Last Report Time\n")
+    outfile.write("Computer Name, IP Address, /24 Subnet, AD Path, AD OU or Container, Last Report Date, Last Report Time\n")
 
     for machine in json_payload["results"]:
         report_line = fetch_results(machine,computer_props["Computer Name"]) + ","
@@ -250,8 +208,6 @@ def main():
             report_line += "CN=" + ad_path.rsplit("CN=",1)[1] + ","
         else:
             report_line += ad_path + ","
-
-        report_line += fetch_results(machine,computer_props["Nessus Recent Login(Recent Nessus Logon)"]) + ","
 
         # Split into date and time
         report_line += re.sub(r"(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d\d\d) (\d\d:\d\d:\d\d) \+\d\d\d\d",r"\2 \3 \4,\5",fetch_results(machine,computer_props["Last Report Time"]))
